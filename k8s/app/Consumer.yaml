@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-demo
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-demo
+  template:
+    metadata:
+      labels:
+        app: consumer-demo
+    spec:
+      containers:
+        - name: consumer-demo
+          image: zouchengli/dubbo-demo:consumer
+          env:
+            - name: DUBBO_IP_TO_REGISTRY
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DUBBO_PORT_TO_REGISTRY
+              value: "30001"
+          ports:
+            - containerPort: 8091

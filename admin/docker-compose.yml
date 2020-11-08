@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.9
+    ports:
+      - 2181:2181
+  admin:
+    image: apache/dubbo-admin
+    depends_on:
+      - zookeeper
+    ports:
+      - 80:8080
+    environment:
+      - admin.registry.address=zookeeper://zookeeper:2181
+      - admin.config-center=zookeeper://zookeeper:2181
+      - admin.metadata-report.address=zookeeper://zookeeper:2181
+  provider-replica1:
+    image: dubbo-provider-1
+    depends_on:
+      - zookeeper
+    ports:
+    - 20880:20880
+    environment:
+      - DUBBO_IP_TO_REGISTRY=192.168.168.79
+      - DUBBO_PORT_TO_REGISTRY=20880
+  provider-replica2:
+    image: dubbo-provider-2
+    depends_on:
+      - zookeeper
+    ports:
+      - 20881:20881
+    environment:
+      - DUBBO_IP_TO_REGISTRY=192.168.168.79
+      - DUBBO_PORT_TO_REGISTRY=20881
